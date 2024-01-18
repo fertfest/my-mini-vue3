@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { isReadonly, shallowReadonly } from "../reactive";
 
 describe("shallowReadonly", () => {
@@ -8,7 +9,7 @@ describe("shallowReadonly", () => {
   });
 
   it("warn when call set", () => {
-    console.warn = jest.fn();
+    console.warn = vi.fn();
 
     const user = shallowReadonly({
       age: 10,

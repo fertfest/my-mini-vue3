@@ -1,14 +1,17 @@
 import { extend } from "../shared";
 
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   private _firstRun: boolean = true;
   private _effectsArray: any[] = [];
   onStop?: () => void;
-  scheduler?: () => void;
+  public scheduler?: () => void;
 
-  constructor(fn) {
+  constructor(fn, scheduler?) {
     this._fn = fn;
+    if (scheduler) {
+      this.scheduler = scheduler;
+    }
   }
 
   pushEffects(effects) {
@@ -33,32 +36,24 @@ class ReactiveEffect {
   }
 
   run() {
-    if (this._firstRun) {
-      this._firstRun = false;
-      this._fn();
-      return;
-    }
-
-    if (this.scheduler) {
-      this.scheduler();
-    } else {
-      this._fn();
-    }
+    // 在执行功能函数之前设置当前 ReactiveEffect 为 activeEffect
+    activeEffect = this;
+    return this._fn();
   }
 }
 
-let activeEffect: any = undefined;
+export let activeEffect: any = undefined;
+
+export function setActiveEffect(effect: any) {
+  activeEffect = effect;
+}
 
 export function effect(fn, options?: any) {
   const _effect = new ReactiveEffect(fn);
 
   extend(_effect, options);
 
-  // 只有执行 effect 函数的时候才设置 activeEffect
-  activeEffect = _effect;
-
   _effect.run();
-
   const res = fn.bind(_effect);
   res.effect = _effect;
   return res;
@@ -92,13 +87,20 @@ export function track(target, key) {
     keyMap.set(key, effects);
   }
 
-  // 最后将新的 effect 添加到 effects中
-  effects.add(activeEffect);
-
-  // 将 effects 存到 activeEffect 的 effectsArray 中
-  activeEffect.pushEffects(effects);
+  trackActiveEffect(effects);
 
   activeEffect = undefined;
+}
+
+export function trackActiveEffect(dep) {
+  if (!isTracking()) {
+    return;
+  }
+  // 防止重复添加
+  if (dep.has(activeEffect)) return;
+
+  dep.add(activeEffect);
+  activeEffect.pushEffects(dep);
 }
 
 export function trigger(target, key) {
@@ -115,8 +117,19 @@ export function trigger(target, key) {
   if (!effects) {
     return;
   }
+  triggerEffects(effects);
+}
 
+export function triggerEffects(effects) {
   for (const effect of effects) {
-    effect.run();
+    if (effect.scheduler) {
+      effect.scheduler();
+    } else {
+      effect.run();
+    }
   }
+}
+
+export function isTracking() {
+  return activeEffect !== undefined;
 }

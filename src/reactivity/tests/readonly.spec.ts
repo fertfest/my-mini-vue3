@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { isProxy, isReactive, isReadonly, readonly } from "../reactive";
 
 describe("readonly", () => {
@@ -23,7 +24,7 @@ describe("readonly", () => {
   });
 
   it("warn when call set", () => {
-    console.warn = jest.fn();
+    console.warn = vi.fn();
 
     const user = readonly({
       age: 10,

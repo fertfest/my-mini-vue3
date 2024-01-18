@@ -3,3 +3,7 @@ export const extend = Object.assign;
 export function isObject(val) {
   return typeof val === "object" && val !== null;
 }
+
+export function hasChanged(val, newVal) {
+  return !Object.is(newVal, val);
+}
