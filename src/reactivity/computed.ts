@@ -1,4 +1,4 @@
-import { ReactiveEffect, effect, setActiveEffect } from "./effect";
+import { ReactiveEffect } from "./effect";
 
 class ComputedRefImpl {
   private _dirty = true;
