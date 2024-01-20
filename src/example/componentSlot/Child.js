@@ -1,4 +1,4 @@
-import { h, ref, reactive, renderSlot } from "../../dist/mini-vue.esm-bundler.js";
+import { h, renderSlots } from "../../../lib/guide-mini-vue.esm.js";
 export default {
   setup() {
     return {};
@@ -6,6 +6,14 @@ export default {
   render() {
     const foo = h("p", {}, "foo");
 
-    return h("div", {}, [foo]);
+    const age = 18;
+
+    return h("div", {}, [
+      renderSlots(this.$slots, 'header', {
+        age
+      }),
+      foo,
+      renderSlots(this.$slots, 'footer')]
+    );
   }
 };

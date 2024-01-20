@@ -1,2 +1,3 @@
-export * from "./createApp";
-export * from "./h";
+export { createApp } from "./createApp";
+export { h } from "./h";
+export { renderSlots } from "./helpers/renderSlots";

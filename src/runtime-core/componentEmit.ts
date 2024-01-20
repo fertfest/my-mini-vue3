@@ -13,8 +13,6 @@ export const emit = (instance, event: string, ...rest) => {
 
   eventName += capitalizeFirst(event);
 
-  console.log(eventName);
-
   if (hasOwn(instance.props, eventName)) {
     instance.props[eventName](...rest);
   }
