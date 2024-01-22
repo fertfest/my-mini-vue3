@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest",
-    "build": "rollup -c rollup.config.js"
+    "build": "npx rollup -c rollup.config.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",

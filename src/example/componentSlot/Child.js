@@ -1,4 +1,4 @@
-import { h, renderSlots } from "../../../lib/guide-mini-vue.esm.js";
+import { h, renderSlot, createTextVNode } from "../../../lib/guide-mini-vue.esm.js";
 export default {
   setup() {
     return {};
@@ -9,11 +9,13 @@ export default {
     const age = 18;
 
     return h("div", {}, [
-      renderSlots(this.$slots, 'header', {
+      renderSlot(this.$slots, 'header', {
         age
       }),
       foo,
-      renderSlots(this.$slots, 'footer')]
+      renderSlot(this.$slots, 'footer'),
+      createTextVNode('persist'),
+    ]
     );
   }
 };
