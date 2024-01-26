@@ -3,6 +3,7 @@ import { initProps } from "./componentProps";
 import { publicInstanceProxyHandlers } from "./componentPublicInstanceHandlers";
 import { emit } from "./componentEmit";
 import { initSlots } from "./componentSlots";
+import { proxyRefs } from "..";
 
 export function createComponentInstance(vnode, parent) {
   const instance = {
@@ -50,7 +51,7 @@ function handleSetupResult(instance, setupResult: any) {
   // function Object
   // TODO: function
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult;
+    instance.setupState = proxyRefs(setupResult);
   }
 
   finishComponentSetup(instance);

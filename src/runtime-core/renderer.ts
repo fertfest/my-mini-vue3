@@ -1,3 +1,4 @@
+import { effect } from "..";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createApp";
@@ -87,13 +88,15 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance: any, container) {
-    const subTree = instance.render.call(instance.proxy);
-    // vnode -> patch
-    // vnode -> element -> mountElement
+    effect(() => {
+      const subTree = instance.render.call(instance.proxy);
+      // vnode -> patch
+      // vnode -> element -> mountElement
 
-    patch(subTree, container, instance);
+      patch(subTree, container, instance);
 
-    instance.vnode.el = subTree.el;
+      instance.vnode.el = subTree.el;
+    });
   }
 
   return {
