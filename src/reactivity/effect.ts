@@ -48,6 +48,13 @@ export function setActiveEffect(effect: any) {
   activeEffect = effect;
 }
 
+/**
+ * 接收一个函数 fn 并执行它, 在首次执行时, 函数内部被访问的响应式变量都会 track 包装该函数的 effect(ReactiveEffect).
+ * 这样, 当响应式变量的值更改并触发依赖时, ReactiveEffect 内部的 fn 会被再次执行.
+ * @param fn 一个函数
+ * @param options 可能包含 scheduler, onStop ...
+ * @returns
+ */
 export function effect(fn, options?: any) {
   const _effect = new ReactiveEffect(fn);
 

@@ -44,6 +44,12 @@ export function unRef(mayBeRef) {
   return isRef(mayBeRef) ? mayBeRef.value : mayBeRef;
 }
 
+/**
+ * 当对代理对象进行 get 操作时, 如果访问的是 ref, 代理对象会直接返回 ref 所保存的值, 而不是 ref 本身.
+ * 当对代理对象进行 set 操作时, 如果 set 的是 ref, 并且 newValue 是非 ref, 会直接将 newValue 设置给 ref 的值而不是替换 ref.
+ * @param original 需要代理的对象
+ * @returns 返回一个代理对象
+ */
 export function proxyRefs(original) {
   return new Proxy(original, {
     get(target, key) {
