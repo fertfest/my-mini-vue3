@@ -13,6 +13,8 @@ export function createComponentInstance(vnode, parent) {
     props: {},
     emit: (str: any) => {},
     parent,
+    next: null,
+    update: null,
     // provides: parent ? parent.provides : {},
     provides: parent ? Object.create(parent.provides) : {},
     slots: {},
@@ -20,6 +22,7 @@ export function createComponentInstance(vnode, parent) {
     subTree: null,
   };
 
+  vnode.component = instance;
   instance.emit = emit.bind(null, instance);
 
   return instance;
