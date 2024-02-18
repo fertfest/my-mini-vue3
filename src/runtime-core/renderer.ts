@@ -1,4 +1,4 @@
-import { effect } from "..";
+import { effect, queueJobs } from "..";
 import { EMPTY_OBJECT } from "../shared";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
@@ -95,9 +95,6 @@ export function createRenderer(options) {
     if (anchor) {
       hostInsert(el, container, anchor);
     }
-    console.log("patchElement");
-    console.log(container);
-    console.log(n1, n2);
 
     const oldProps = n1.props || EMPTY_OBJECT;
     const newProps = n2.props || EMPTY_OBJECT;
@@ -130,7 +127,6 @@ export function createRenderer(options) {
   function patchChildren(n1, n2, container, parentComponent, anchor) {
     const { shapeFlag: prevShapeFlag, children: c1 } = n1;
     const { shapeFlag: nextShapeFlag, children: c2 } = n2;
-    console.log("container patchChildren", container);
 
     if (nextShapeFlag & ShapeFlags.TEXT_CHILDREN) {
       if (prevShapeFlag & ShapeFlags.ARRAY_CHILDREN) {
@@ -170,6 +166,8 @@ export function createRenderer(options) {
     parentComponent,
     parentAnchor
   ) {
+    console.log("patchKeydChildren");
+
     let j1 = c1.length - 1;
     let j2 = c2.length - 1;
     let i = 0;
@@ -272,8 +270,6 @@ export function createRenderer(options) {
           if (newIndex === longestIncreasingSequence[idx] && idx >= 0) {
             idx--;
           } else {
-            console.log("move or update");
-
             const prevChild =
               oldIndex === Number.MAX_SAFE_INTEGER ? null : c1[oldIndex];
             patch(prevChild, nextChild, container, parentAnchor, anchor);
@@ -322,30 +318,37 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance: any, container) {
-    instance.update = effect(() => {
-      if (instance.isInitializing) {
-        const subTree = (instance.subTree = instance.render.call(
-          instance.proxy
-        ));
-        patch(null, subTree, container, instance, null);
+    instance.update = effect(
+      () => {
+        if (instance.isInitializing) {
+          const subTree = (instance.subTree = instance.render.call(
+            instance.proxy
+          ));
+          patch(null, subTree, container, instance, null);
 
-        instance.vnode.el = subTree.el;
-        instance.isInitializing = false;
-      } else {
-        const { next, vnode } = instance;
-        if (next) {
-          next.el = vnode.el;
-          updateComponentPreRender(instance, next);
+          instance.vnode.el = subTree.el;
+          instance.isInitializing = false;
+        } else {
+          const { next, vnode } = instance;
+          if (next) {
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+          const prevSubTree = instance.subTree;
+          const subTree = (instance.subTree = instance.render.call(
+            instance.proxy
+          ));
+
+          patch(prevSubTree, subTree, container, instance, null);
+          instance.vnode.el = subTree.el;
         }
-        const prevSubTree = instance.subTree;
-        const subTree = (instance.subTree = instance.render.call(
-          instance.proxy
-        ));
-
-        patch(prevSubTree, subTree, container, instance, null);
-        instance.vnode.el = subTree.el;
+      },
+      {
+        scheduler() {
+          queueJobs(instance.update);
+        },
       }
-    });
+    );
   }
 
   return {
