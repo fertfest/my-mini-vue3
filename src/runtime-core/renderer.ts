@@ -166,8 +166,6 @@ export function createRenderer(options) {
     parentComponent,
     parentAnchor
   ) {
-    console.log("patchKeydChildren");
-
     let j1 = c1.length - 1;
     let j2 = c2.length - 1;
     let i = 0;
@@ -322,6 +320,7 @@ export function createRenderer(options) {
       () => {
         if (instance.isInitializing) {
           const subTree = (instance.subTree = instance.render.call(
+            instance.proxy,
             instance.proxy
           ));
           patch(null, subTree, container, instance, null);
@@ -336,6 +335,7 @@ export function createRenderer(options) {
           }
           const prevSubTree = instance.subTree;
           const subTree = (instance.subTree = instance.render.call(
+            instance.proxy,
             instance.proxy
           ));
 
