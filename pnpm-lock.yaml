@@ -4,31 +4,74 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-devDependencies:
-  '@babel/core':
-    specifier: ^7.23.7
-    version: 7.23.7
-  '@babel/preset-env':
-    specifier: ^7.23.8
-    version: 7.23.8(@babel/core@7.23.7)
-  '@babel/preset-typescript':
-    specifier: ^7.23.3
-    version: 7.23.3(@babel/core@7.23.7)
-  '@rollup/plugin-typescript':
-    specifier: ^11.1.6
-    version: 11.1.6(rollup@4.9.5)(tslib@2.6.2)(typescript@5.3.3)
-  rollup:
-    specifier: ^4.9.5
-    version: 4.9.5
-  tslib:
-    specifier: ^2.6.2
-    version: 2.6.2
-  typescript:
-    specifier: ^5.3.3
-    version: 5.3.3
-  vitest:
-    specifier: ^1.2.0
-    version: 1.2.0
+importers:
+
+  .:
+    devDependencies:
+      '@babel/core':
+        specifier: ^7.23.7
+        version: 7.23.7
+      '@babel/preset-env':
+        specifier: ^7.23.8
+        version: 7.23.8(@babel/core@7.23.7)
+      '@babel/preset-typescript':
+        specifier: ^7.23.3
+        version: 7.23.3(@babel/core@7.23.7)
+      '@rollup/plugin-typescript':
+        specifier: ^11.1.6
+        version: 11.1.6(rollup@4.9.5)(tslib@2.6.2)(typescript@5.3.3)
+      rollup:
+        specifier: ^4.9.5
+        version: 4.9.5
+      tslib:
+        specifier: ^2.6.2
+        version: 2.6.2
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+      vitest:
+        specifier: ^1.2.0
+        version: 1.2.0
+
+  packages/compiler-core:
+    dependencies:
+      '@my-mini-vue3/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/example: {}
+
+  packages/reactivity:
+    dependencies:
+      '@my-mini-vue3/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/runtime-core:
+    dependencies:
+      '@my-mini-vue3/reactivity':
+        specifier: workspace:^
+        version: link:../reactivity
+      '@my-mini-vue3/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  packages/runtime-dom:
+    dependencies:
+      '@my-mini-vue3/runtime-core':
+        specifier: workspace:^
+        version: link:../runtime-core
+
+  packages/shared: {}
+
+  packages/vue:
+    dependencies:
+      '@my-mini-vue3/compiler-core':
+        specifier: workspace:^
+        version: link:../compiler-core
+      '@my-mini-vue3/runtime-dom':
+        specifier: workspace:^
+        version: link:../runtime-dom
 
 packages:
 
